@@ -2,18 +2,28 @@
 
 class MetacriticApi
 {
-  public function metascore($name, $platform) {
+  public function metascore($type = "game", $name, $platform = NULL) {
 
-    if(!$name || !$platform) {
+    if(!$name) {
       throw new Exception("No parameters.");
     }
 
     $name = self::stripUrl($name);
-    $platform = self::stripUrl($platform);
+    if($platform)
+    {
+      $platform = self::stripUrl($platform);
+    }
 
     $dom = new DomDocument();
-    @$dom->loadHtmlFile("http://www.metacritic.com/game/$platform/$name/");
-
+    if($type!=("movie" || "tv"))
+    {
+      $dom->loadHtmlFile("http://www.metacritic.com/$type/$platform/$name/"); //replace this with Metacritics JSON search
+    }
+    else
+    {
+      $dom->loadHtmlFile("http://www.metacritic.com/$type/$name/"); //replace this with Metacritics JSON search
+    }
+    
     $xpath = new DOMXpath($dom);
     $nodes = $xpath->evaluate("//span[@property='v:average']");
 
